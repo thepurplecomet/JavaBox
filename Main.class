@@ -1,0 +1,47 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+
+public class Main
+{
+    public static void main(){
+        JavaBox window = new JavaBox(400,400,true);
+        window.isVisible(true);
+        window.addGrid();
+        Point3D[] poly = new Point3D[4];
+        poly[0] = new Point3D(0,-100,-100);
+        poly[1] = new Point3D(-100,-100,-100);
+        poly[2] = new Point3D(-100,-100,100);
+        poly[3] = new Point3D(0,-100,100);
+        Polygon3D shape = new Polygon3D(poly);
+        window.getGrid().renderPerspPolygon3D(shape,Color.RED,false);
+        Point3D[] poly1 = new Point3D[4];
+        poly1[0] = new Point3D(0,100,-100);
+        poly1[1] = new Point3D(-100,100,-100);
+        poly1[2] = new Point3D(-100,100,100);
+        poly1[3] = new Point3D(0,100,100);
+        Polygon3D shape1 = new Polygon3D(poly1);
+        window.getGrid().renderPerspPolygon3D(shape1,Color.BLUE,false);
+        Point3D[] poly2 = new Point3D[4];
+        poly2[0] = new Point3D(0,-300,100);
+        poly2[1] = new Point3D(0,-100,100);
+        poly2[2] = new Point3D(0,-100,-100);
+        poly2[3] = new Point3D(0,-300,-100);
+        Polygon3D shape2 = new Polygon3D(poly2);
+        window.getGrid().renderPerspPolygon3D(shape2,Color.GREEN,false);
+        Point3D[] poly3 = new Point3D[4];
+        poly3[0] = new Point3D(0,300,100);
+        poly3[1] = new Point3D(0,100,100);
+        poly3[2] = new Point3D(0,100,-100);
+        poly3[3] = new Point3D(0,300,-100);
+        Polygon3D shape3 = new Polygon3D(poly3);
+        window.getGrid().renderPerspPolygon3D(shape3,Color.MAGENTA,false);
+        Point3D[] poly4 = new Point3D[4];
+        poly4[0] = new Point3D(-100,100,100);
+        poly4[1] = new Point3D(-100,100,-100);
+        poly4[2] = new Point3D(-100,-100,-100);
+        poly4[3] = new Point3D(0-100,-100,100);
+        Polygon3D shape4 = new Polygon3D(poly4);
+        window.getGrid().renderPerspPolygon3D(shape4,Color.WHITE,false);
+    }
+}

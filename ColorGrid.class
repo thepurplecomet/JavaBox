@@ -1,0 +1,111 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import java.awt.Polygon;
+import java.awt.Point;
+
+public class ColorGrid extends JPanel
+{
+    public int SCALE;
+    public int WIDTH;
+    public int HEIGHT;
+    private int depthMultiplier = 100; 
+    private Graphics2D mod;
+    private BufferedImage grid;
+
+    public ColorGrid(int width,int height){
+        this.WIDTH=width;
+        this.HEIGHT=height;
+        this.SCALE = 1;
+        this.grid=new BufferedImage(
+            this.WIDTH,
+            this.HEIGHT,
+            BufferedImage.TYPE_INT_RGB);
+        this.mod=(Graphics2D) this.grid.getGraphics();
+        repaint();
+    }
+    
+    public ColorGrid(int width,int height, int scale){
+        this.WIDTH=width;
+        this.HEIGHT=height;
+        this.SCALE = scale;
+        this.grid=new BufferedImage(
+            this.WIDTH * scale,
+            this.HEIGHT * scale,
+            BufferedImage.TYPE_INT_RGB);
+        this.mod=(Graphics2D) this.grid.getGraphics();
+        repaint();
+    }
+
+    @Override
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        g.setColor(Color.WHITE);
+        g.fillRect(0,0,this.WIDTH,this.HEIGHT);
+        g.drawImage(
+            grid,
+            0,0,
+            this.WIDTH,this.HEIGHT,
+            null);
+    }
+
+    public void setPixel(int x,int y,int rgb){
+        this.mod.setColor(new Color(rgb));
+        this.mod.fillRect(x,y,1,1);
+        repaint();
+    }
+
+    public Graphics2D getG2D(){
+        return mod;
+    }
+
+    public Point orthographicPoint(Point3D point){
+        return new Point(
+            (int)(this.WIDTH/2 + point.y),
+            (int)(this.HEIGHT/2 + point.z));
+    }
+
+    public void renderOrthoPolygon3D(Polygon3D poly,Color col,boolean full){
+        Polygon object = new Polygon();
+        Point temp;
+        for (int i = 0; i < poly.getPolyArray().length; i++){
+            temp = orthographicPoint(poly.getPoint3D(i));
+            object.addPoint(temp.x,temp.y);
+        }
+        this.mod.setColor(col);
+        if (full)
+            this.mod.fillPolygon(object);
+        else
+            this.mod.drawPolygon(object);
+        repaint();
+    }
+
+    public Point perspectivePoint(Point3D point){
+        double x3D = point.y;
+        double y3D = point.z;
+        double z3D = point.x;
+        double[] persp = new double[3];
+        double cameraDistance = 8 - z3D;
+        double localScale = Math.abs(depthMultiplier/(cameraDistance+depthMultiplier));
+        double newX = x3D * localScale;
+        double newY = y3D * localScale;
+        int x2D = (int)(this.WIDTH/2 + newX);
+        int y2D = (int)(this.HEIGHT/2 - newY);
+        return new Point(x2D,y2D);
+    }
+
+    public void renderPerspPolygon3D(Polygon3D poly,Color col,boolean full){
+        Polygon object = new Polygon();
+        Point temp;
+        for (int i = 0; i < poly.getPolyArray().length; i++){
+            temp = perspectivePoint(poly.getPoint3D(i));
+            object.addPoint(temp.x,temp.y);
+        }
+        this.mod.setColor(col);
+        if (full)
+            this.mod.fillPolygon(object);
+        else
+            this.mod.drawPolygon(object);
+        repaint();
+    }
+}
